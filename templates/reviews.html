@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block title %}Рецензии{% endblock %}
+
+{% block content %}
+<div class="reviews-page">
+  <div class="reviews-header">
+    <h1>🎬 Рецензии сообщества</h1>
+    {% if session.get('user_id') and not session.get('is_admin') %}
+      <a href="{{ url_for('submit_review') }}" class="btn-primary">✏️ Написать рецензию</a>
+    {% elif not session.get('user_id') %}
+      <a href="{{ url_for('login') }}" class="btn-primary">Войти, чтобы написать</a>
+    {% endif %}
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="flash flash-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <div class="reviews-feed">
+    {% if reviews %}
+      {% for rev in reviews %}
+      <div class="review-card" id="review-{{ rev[0] }}">
+        <div class="review-card__header">
+          <div class="review-card__avatar">
+            {% if rev[2] %}
+              <img src="{{ url_for('static', filename='uploads/' ~ rev[2]) }}" alt="avatar">
+            {% else %}
+              <div class="avatar-placeholder">{{ rev[1][0]|upper }}</div>
+            {% endif %}
+          </div>
+          <div class="review-card__meta">
+            <a href="{{ url_for('profile', username=rev[1]) }}" class="review-card__author">{{ rev[1] }}</a>
+            <span class="review-card__date">{{ rev[6][:16] if rev[6] else '' }}</span>
+          </div>
+          <div class="review-card__rating">
+            <span class="rating-badge">⭐ {{ rev[5] }}/10</span>
+          </div>
+        </div>
+        <div class="review-card__movie">🎞️ {{ rev[3] }}</div>
+        <div class="review-card__content">{{ rev[4] }}</div>
+
+        <!-- Кнопка лайка -->
+        <div class="review-card__footer">
+          <button class="like-btn" data-review-id="{{ rev[0] }}" onclick="toggleLike(this)">
+            <span class="like-icon">❤️</span>
+            <span class="likes-count">{{ rev[7] }}</span>
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <p>Рецензий пока нет. Будьте первым!</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+async function toggleLike(btn) {
+    const reviewId = btn.dataset.reviewId;
+    const countSpan = btn.querySelector('.likes-count');
+    const icon = btn.querySelector('.like-icon');
+
+    try {
+        const response = await fetch(`/review/${reviewId}/like`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        });
+
+        if (response.status === 401) {
+            alert('Войдите в аккаунт, чтобы ставить лайки');
+            window.location.href = "{{ url_for('login') }}";
+            return;
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            countSpan.textContent = data.likes;
+            if (data.removed) {
+                btn.classList.remove('liked');
+                icon.textContent = '❤️';
+            } else {
+                btn.classList.add('liked');
+                icon.textContent = '❤️';
+            }
+        }
+    } catch (err) {
+        console.error('Ошибка:', err);
+    }
+}
+
+// Проверяем, какие рецензии уже лайкнуты
+document.addEventListener('DOMContentLoaded', async () => {
+    const likeBtns = document.querySelectorAll('.like-btn');
+    for (const btn of likeBtns) {
+        const reviewId = btn.dataset.reviewId;
+        try {
+            const resp = await fetch(`/review/${reviewId}/likes`);
+            const data = await resp.json();
+            if (data.user_liked) {
+                btn.classList.add('liked');
+            }
+        } catch (err) {
+            console.error('Ошибка проверки лайка:', err);
+        }
+    }
+});
+</script>
+
+<style>
+.reviews-page { max-width: 700px; margin: 0 auto; padding: 20px; }
+.reviews-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.reviews-header h1 { margin: 0; font-size: 1.6rem; }
+.btn-primary {
+  background: #5181b8; color: #fff; padding: 8px 18px;
+  border-radius: 8px; text-decoration: none; font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: #3d6a9e; }
+.reviews-feed { display: flex; flex-direction: column; gap: 16px; }
+.review-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e7e8ec);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.review-card__header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.review-card__avatar img, .avatar-placeholder {
+  width: 42px; height: 42px; border-radius: 50%; object-fit: cover;
+}
+.avatar-placeholder {
+  background: #5181b8; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1.1rem;
+}
+.review-card__meta { flex: 1; }
+.review-card__author { font-weight: 600; color: #2a5885; text-decoration: none; }
+.review-card__author:hover { text-decoration: underline; }
+.review-card__date { display: block; font-size: 0.78rem; color: #888; }
+.rating-badge {
+  background: #fef3cd; color: #856404;
+  padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+}
+.review-card__movie {
+  font-size: 0.92rem; font-weight: 600; color: #555;
+  margin-bottom: 8px;
+}
+.review-card__content { line-height: 1.6; color: var(--text-color, #333); white-space: pre-wrap; }
+
+/* Стили для лайков */
+.review-card__footer {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+.like-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  color: #666;
+}
+.like-btn:hover {
+  background: #fff0f0;
+  border-color: #ff6b6b;
+}
+.like-btn.liked {
+  background: #ff6b6b;
+  color: white;
+  border-color: #ff6b6b;
+}
+.like-btn.liked .like-icon {
+  filter: brightness(0) invert(1);
+}
+.like-icon {
+  font-size: 16px;
+}
+.likes-count {
+  font-weight: 600;
+}
+
+.empty-state { text-align: center; color: #888; padding: 40px 0; font-size: 1.1rem; }
+.flash { padding: 10px 16px; border-radius: 8px; margin-bottom: 12px; }
+.flash-success { background: #d4edda; color: #155724; }
+.flash-error   { background: #f8d7da; color: #721c24; }
+</style>
+{% endblock %}

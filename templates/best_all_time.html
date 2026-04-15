@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Лучшее за всё время{% endblock %}
+
+{% block content %}
+<div class="page-header best-all-time-header">
+    <div class="header-content">
+        <h1>🏆 ЛУЧШЕЕ ЗА ВСЁ ВРЕМЯ</h1>
+        <p>Бессмертная классика, проверенная поколениями</p>
+        <div class="timeline-badge">От XIX века до наших дней</div>
+    </div>
+</div>
+
+<div class="content-section best-all-time-content">
+    <div class="timeline-section">
+        <h2 class="timeline-title">📜 ХРОНОЛОГИЯ КЛАССИКИ</h2>
+        <div class="timeline">
+            {% for book in classic_books %}
+            <div class="timeline-item">
+                <div class="timeline-year">{{ book[2] }}</div>
+                <div class="timeline-content">
+                    <h3>{{ book[0] }}</h3>
+                    <p class="timeline-author">{{ book[1] }}</p>
+                    {% if book[6] %}
+                    <div class="timeline-adaptation">
+                        <span class="adaptation-icon">🎬</span>
+                        <span class="adaptation-text">{{ book[6] }} ({{ book[7] }})</span>
+                        <span class="adaptation-rating">⭐ {{ book[8] or book[3] }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="classic-grid">
+        <div class="classic-section">
+            <div class="section-header">
+                <h2>📚 ВЕЛИКИЕ КНИГИ</h2>
+                <p>Которые изменили мировую литературу</p>
+            </div>
+            <div class="classic-list">
+                {% for book in classic_books %}
+                <div class="classic-item">
+                    <div class="classic-rank">{{ loop.index }}</div>
+                    <div class="classic-icon">{{ book[4] }}</div>
+                    <div class="classic-content">
+                        <h3>{{ book[0] }}</h3>
+                        <div class="classic-meta">
+                            <span class="classic-author">{{ book[1] }}</span>
+                            <span class="classic-year">{{ book[2] }}</span>
+                            <span class="classic-rating">⭐ {{ book[3] }}</span>
+                        </div>
+                        <p class="classic-summary">{{ book[5][:120] }}...</p>
+                        {% if book[6] %}
+                        <div class="classic-adaptation">
+                            <span class="adaptation-label">ЭКРАНИЗАЦИЯ</span>
+                            <span class="adaptation-title">{{ book[6] }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="classic-section">
+            <div class="section-header">
+                <h2>🎬 ЛЕГЕНДЫ КИНО</h2>
+                <p>Фильмы, вошедшие в историю кинематографа</p>
+            </div>
+            <div class="classic-list">
+                {% for movie in classic_movies %}
+                <div class="classic-item">
+                    <div class="classic-rank">{{ loop.index }}</div>
+                    <div class="classic-icon">{{ movie[4] }}</div>
+                    <div class="classic-content">
+                        <h3>{{ movie[0] }}</h3>
+                        <div class="classic-meta">
+                            <span class="classic-director">{{ movie[1] }}</span>
+                            <span class="classic-year">{{ movie[2] }}</span>
+                            <span class="classic-rating">⭐ {{ movie[3] }}</span>
+                        </div>
+                        <p class="classic-summary">{{ movie[5][:120] }}...</p>
+                        {% if movie[6] %}
+                        <div class="classic-source">
+                            <span class="source-label">ПО КНИГЕ</span>
+                            <span class="source-title">{{ movie[6] }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="legacy-section">
+        <h2>🌟 НАСЛЕДИЕ КЛАССИКИ</h2>
+        <div class="legacy-cards">
+            <div class="legacy-card">
+                <div class="legacy-icon">📖</div>
+                <h3>Литературное влияние</h3>
+                <p>Эти произведения задали стандарты для последующих поколений писателей</p>
+            </div>
+            <div class="legacy-card">
+                <div class="legacy-icon">🎥</div>
+                <h3>Кинематографическое наследие</h3>
+                <p>Фильмы, которые изменили язык кино и вдохновили режиссеров</p>
+            </div>
+            <div class="legacy-card">
+                <div class="legacy-icon">🔄</div>
+                <h3>Книга → Фильм</h3>
+                <p>Классические экранизации, ставшие самостоятельными произведениями искусства</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

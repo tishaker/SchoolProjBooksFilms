@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль — {{ username }}{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+
+    <!-- Шапка профиля -->
+    <div class="profile-header">
+        <div class="profile-avatar-wrap">
+            {% if avatar %}
+                <img src="{{ url_for('static', filename='uploads/' + avatar) }}"
+                     class="profile-avatar-img" alt="avatar">
+            {% else %}
+                <div class="profile-avatar">{{ username[0].upper() }}</div>
+            {% endif %}
+
+            {% if session.username == username %}
+            <form action="{{ url_for('upload_avatar', username=username) }}"
+                  method="POST" enctype="multipart/form-data" class="avatar-form">
+                <label class="avatar-upload-btn" title="Сменить аватар">
+                    📷
+                    <input type="file" name="avatar" accept="image/*"
+                           onchange="this.form.submit()" style="display:none">
+                </label>
+            </form>
+            {% endif %}
+        </div>
+
+        <div class="profile-info">
+            <h2>{{ username }}</h2>
+            <p class="profile-subtitle">Участник Кинотеатра Книг</p>
+        </div>
+    </div>
+
+    <!-- Счётчики -->
+    <div class="profile-stats">
+        <div class="profile-stat-card">
+            <div class="stat-number">{{ reviews_count }}</div>
+            <div class="stat-label">📝 Рецензий</div>
+        </div>
+        <div class="profile-stat-card">
+            <div class="stat-number">{{ likes_count }}</div>
+            <div class="stat-label">❤️ Рейтинг</div>
+        </div>
+        <div class="profile-stat-card">
+            <div class="stat-number">{{ comments|length }}</div>
+            <div class="stat-label">💬 Комментариев</div>
+        </div>
+    </div>
+
+    <!-- График активности -->
+    <div class="profile-section">
+        <h3>📊 Активность за неделю</h3>
+        <div class="activity-graph">
+            {% for day in activity_data %}
+            <div class="activity-col">
+                <div class="activity-bar-wrap">
+                    <div class="activity-bar {% if day.count == 0 %}empty{% endif %}"
+                         style="height: {{ [day.count * 20, 80] | min }}px"
+                         title="{{ day.count }} действий">
+                    </div>
+                </div>
+                <div class="activity-label">
+                    {{ day.day[8:] }}.{{ day.day[5:7] }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Последние комментарии -->
+    <div class="profile-section">
+        <h3>💬 Последние комментарии</h3>
+        {% if comments %}
+            {% for comment in comments %}
+            <div class="comment-item">
+                <p class="comment-text">{{ comment[0] }}</p>
+                <span class="comment-date">{{ comment[1][:10] }}</span>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-state">Комментариев пока нет</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

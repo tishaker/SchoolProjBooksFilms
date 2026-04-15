@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Flask App{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-container">
+    <div class="nav-logo">
+      <a href="{{ url_for('index') }}">Кинотеатр Книг</a>
+    </div>
+
+    <!-- Строка поиска -->
+    <div class="search-container">
+      <form action="{{ url_for('index') }}" method="GET" class="search-form">
+        <input type="text" name="search" placeholder="Поиск книг и фильмов..."
+               value="{{ search_query or '' }}" class="search-input">
+        <button type="submit" class="search-btn">🔍</button>
+      </form>
+    </div>
+
+    <div class="nav-menu">
+      {% if session.username %}
+        <span class="nav-welcome">Привет, {{ session.username }}!</span>
+        <a href="{{ url_for('profile', username=session.username) }}" class="nav-link">Профиль</a>
+        <a href="{{ url_for('reviews') }}" class="nav-link">Рецензии</a>
+
+        {% if session.get('is_admin') %}
+          <a href="{{ url_for('admin_reviews') }}" class="nav-link">Модерация</a>
+        {% endif %}
+
+        <a href="{{ url_for('logout') }}" class="nav-link">Выйти</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="nav-link">Вход</a>
+        <a href="{{ url_for('register') }}" class="nav-link">Регистрация</a>
+        <a href="{{ url_for('reviews') }}" class="nav-link">Рецензии</a>
+      {% endif %}
+    </div>
+
+  </div> <!-- Закрываем nav-container -->
+</nav> <!-- Закрываем navbar -->
+
+<div class="container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}" id="alert-{{ loop.index }}">
+          {{ message }}
+          <button onclick="this.parentElement.style.display='none'"
+                  class="alert-close">✕</button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

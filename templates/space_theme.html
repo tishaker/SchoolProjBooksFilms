@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Тема месяца: Космос{% endblock %}
+
+{% block content %}
+<div class="page-header space-theme-header">
+    <h1>🚀 Тема месяца: Космос</h1>
+    <p>Исследуйте вселенную через книги и фильмы</p>
+</div>
+
+<div class="content-section space-theme-content">
+    <div class="space-intro">
+        <h2>🌌 Путешествие к звёздам</h2>
+        <p>В этом месяце мы исследуем космическую тематику. От научной фантастики до реальных историй освоения космоса — здесь вы найдёте произведения, которые расширят границы вашего воображения.</p>
+    </div>
+
+    <div class="space-items-grid">
+        <div class="space-section">
+            <h2 class="space-section-title">📚 Космические книги</h2>
+            <div class="space-list">
+                {% for book in space_books %}
+                <div class="space-item">
+                    <div class="space-icon">{{ book[4] }}</div>
+                    <div class="space-content">
+                        <h3>{{ book[0] }}</h3>
+                        <div class="space-meta">
+                            <span class="space-author">{{ book[1] }}</span>
+                            <span class="space-year">{{ book[2] }}</span>
+                            <span class="space-rating">⭐ {{ book[5] }}</span>
+                        </div>
+                        <p class="space-summary">{{ book[3] }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="space-section">
+            <h2 class="space-section-title">🎬 Космические фильмы</h2>
+            <div class="space-list">
+                {% for movie in space_movies %}
+                <div class="space-item">
+                    <div class="space-icon">{{ movie[4] }}</div>
+                    <div class="space-content">
+                        <h3>{{ movie[0] }}</h3>
+                        <div class="space-meta">
+                            <span class="space-director">{{ movie[1] }}</span>
+                            <span class="space-year">{{ movie[2] }}</span>
+                            <span class="space-rating">⭐ {{ movie[5] }}</span>
+                        </div>
+                        <p class="space-summary">{{ movie[3] }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

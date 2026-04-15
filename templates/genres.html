@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Жанры{% endblock %}
+
+{% block content %}
+<div class="page-header genres-header">
+    <div class="header-content">
+        <h1>🎭 ЖАНРЫ</h1>
+        <p>Выберите настроение и погрузитесь в мир историй</p>
+        <div class="genre-counter">Всего жанров: {{ genres_data|length }}</div>
+    </div>
+</div>
+
+<div class="content-section genres-content">
+    <div class="genres-intro">
+        <h2>🎨 Палитра жанров</h2>
+        <p>Каждый жанр — это уникальный мир со своими правилами, атмосферой и эмоциями. 
+           Откройте для себя новые грани литературы и кинематографа.</p>
+    </div>
+
+    <div class="genres-grid">
+        {% for genre in genres_data %}
+        <div class="genre-card" style="--hue: {{ loop.index * 50 }}">
+            <div class="genre-header">
+                <h3>{{ genre[0] }}</h3>
+                <div class="genre-stats">
+                    <span class="stat-books">{{ genre[4] }} 📚</span>
+                    <span class="stat-movies">{{ genre[5] }} 🎬</span>
+                </div>
+            </div>
+            <p class="genre-description">{{ genre[1] }}</p>
+            <div class="genre-examples">
+                <div class="example">
+                    <span class="example-icon">📖</span>
+                    <span class="example-text">{{ genre[2] or 'Пример книги' }}</span>
+                </div>
+                <div class="example">
+                    <span class="example-icon">🎥</span>
+                    <span class="example-text">{{ genre[3] or 'Пример фильма' }}</span>
+                </div>
+            </div>
+            <div class="genre-mood">
+                {% if 'Комедия' in genre[0] %}
+                <span class="mood-tag">😄 Смех</span>
+                {% elif 'Драма' in genre[0] %}
+                <span class="mood-tag">😢 Эмоции</span>
+                {% elif 'Детектив' in genre[0] %}
+                <span class="mood-tag">🔍 Загадка</span>
+                {% elif 'Фантастика' in genre[0] %}
+                <span class="mood-tag">🚀 Приключения</span>
+                {% elif 'Ужасы' in genre[0] %}
+                <span class="mood-tag">👻 Страх</span>
+                {% elif 'Приключения' in genre[0] %}
+                <span class="mood-tag">🗺️ Исследования</span>
+                {% else %}
+                <span class="mood-tag">📖 Чтение</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="genre-recommendation">
+        <h2>🎯 Не можете выбрать?</h2>
+        <div class="recommendation-cards">
+            <div class="rec-card">
+                <h4>Хочу отдохнуть</h4>
+                <p>Выберите <strong>Комедию</strong> или <strong>Приключения</strong></p>
+                <div class="rec-icon">😌</div>
+            </div>
+            <div class="rec-card">
+                <h4>Хочу подумать</h4>
+                <p>Попробуйте <strong>Детектив</strong> или <strong>Триллер</strong></p>
+                <div class="rec-icon">🤔</div>
+            </div>
+            <div class="rec-card">
+                <h4>Хочу впечатлений</h4>
+                <p>Окунитесь в <strong>Фантастику</strong> или <strong>Ужасы</strong></p>
+                <div class="rec-icon">😲</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

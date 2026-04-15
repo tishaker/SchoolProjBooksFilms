@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+  <div class="hero-content">
+    <h1>📘Книги или 🎬Фильмы?</h1>
+    <p>Реши для себя, схожи они или различны</p>
+    {% if not session.username %}
+    <div class="hero-buttons">
+      <a href="{{ url_for('register') }}" class="btn btn-primary">Начать сейчас</a>
+      <a href="{{ url_for('login') }}" class="btn btn-secondary">Войти</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Результаты поиска -->
+{% if search_query %}
+<div class="search-results">
+  <h2>Результаты поиска для "{{ search_query }}"</h2>
+
+  {% if search_results %}
+  <div class="results-count">
+    Найдено результатов: {{ search_results|length }}
+  </div>
+
+  {% for result in search_results %}
+  <div class="result-item {{ result[4] }}">
+            <span class="result-type {{ result[4] }}">
+                {% if result[4] == 'book' %}📚 Книга{% else %}🎬 Фильм{% endif %}
+            </span>
+    <div class="result-title">{{ result[0] }}</div>
+    <div class="result-meta">
+      {% if result[4] == 'book' %}
+      ✍️ Автор: {{ result[1] }}
+      {% else %}
+      🎥 Режиссер: {{ result[1] }}
+      {% endif %}
+    </div>
+    <div class="result-summary">{{ result[2] }}</div>
+  </div>
+  {% endfor %}
+  {% else %}
+  <div class="no-results">
+    <h3>Ничего не найдено</h3>
+    <p>Попробуйте изменить поисковый запрос или проверьте правописание</p>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="features">
+  <a href="{{ url_for('top_month') }}" class="feature-link">
+    <div class="feature-card">
+      <h3>🌟Топ месяца</h3>
+      <p>Что почитать или посмотреть в этот месяц?</p>
+    </div>
+  </a>
+  <a href="{{ url_for('genres') }}" class="feature-link">
+    <div class="feature-card">
+      <h3>😂Жанры</h3>
+      <p>Какое у тебя настроение?</p>
+    </div>
+  </a>
+  <a href="{{ url_for('best_all_time') }}" class="feature-link">
+    <div class="feature-card">
+      <h3>💥Лучшее за всё время</h3>
+      <p>Классика фильмов и книг</p>
+    </div>
+  </a>
+  <a href="{{ url_for('space_theme') }}" target="_blank" class="feature-link">
+    <div class="feature-card">
+      <h3>🚀Тема месяца: Космос</h3>
+      <p>Исследуйте вселенную через книги и фильмы</p>
+    </div>
+  </a>
+</div>
+{% endblock %}

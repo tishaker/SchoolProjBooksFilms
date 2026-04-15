@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Топ месяца{% endblock %}
+
+{% block content %}
+<div class="page-header top-month-header">
+    <div class="header-content">
+        <h1>🌟 ТОП МЕСЯЦА</h1>
+        <p>Самые обсуждаемые книги и фильмы с экранизациями</p>
+        <div class="month-badge" id="current-month"></div>
+    </div>
+</div>
+
+<div class="content-section top-month-content">
+    <div class="month-stats">
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-info">
+                <h3>Книги с экранизациями</h3>
+                <p class="stat-number">{{ top_books|length }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🎬</div>
+            <div class="stat-info">
+                <h3>Фильмы по книгам</h3>
+                <p class="stat-number">{{ top_movies|length }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-info">
+                <h3>Средний рейтинг</h3>
+                <p class="stat-number">4.7</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="top-grid">
+        <div class="top-section">
+            <div class="section-header">
+                <h2>📖 ЛУЧШИЕ КНИГИ МЕСЯЦА</h2>
+                <p>Которые стали культовыми фильмами</p>
+            </div>
+            <div class="top-list">
+                {% for book in top_books %}
+                <div class="top-item book-item">
+                    <div class="item-rank">#{{ loop.index }}</div>
+                    <div class="item-icon">{{ book[4] }}</div>
+                    <div class="item-content">
+                        <h3>{{ book[0] }}</h3>
+                        <div class="item-meta">
+                            <span class="item-author">{{ book[1] }}</span>
+                            <span class="item-year">{{ book[2] }}</span>
+                            <span class="item-rating">⭐ {{ book[3] }}</span>
+                        </div>
+                        <p class="item-summary">{{ book[5][:150] }}...</p>
+                        {% if book[6] %}
+                        <div class="adaptation-badge">
+                            <span class="badge-icon">🎬</span>
+                            <span class="badge-text">Экранизация: {{ book[6] }} ({{ book[7] }})</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="top-section">
+            <div class="section-header">
+                <h2>🎥 ПОПУЛЯРНЫЕ ФИЛЬМЫ</h2>
+                <p>Основанные на литературных произведениях</p>
+            </div>
+            <div class="top-list">
+                {% for movie in top_movies %}
+                <div class="top-item movie-item">
+                    <div class="item-rank">#{{ loop.index }}</div>
+                    <div class="item-icon">{{ movie[4] }}</div>
+                    <div class="item-content">
+                        <h3>{{ movie[0] }}</h3>
+                        <div class="item-meta">
+                            <span class="item-director">{{ movie[1] }}</span>
+                            <span class="item-year">{{ movie[2] }}</span>
+                            <span class="item-rating">⭐ {{ movie[3] }}</span>
+                        </div>
+                        <p class="item-summary">{{ movie[5][:150] }}...</p>
+                        {% if movie[6] %}
+                        <div class="source-badge">
+                            <span class="badge-icon">📚</span>
+                            <span class="badge-text">По книге: {{ movie[6] }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Автоматически обновляем месяц на JavaScript
+    function updateMonth() {
+        const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 
+                       'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+        const now = new Date();
+        const monthElement = document.getElementById('current-month');
+        if (monthElement) {
+            monthElement.textContent = months[now.getMonth()] + ' ' + now.getFullYear();
+        }
+    }
+    document.addEventListener('DOMContentLoaded', updateMonth);
+</script>
+{% endblock %}
